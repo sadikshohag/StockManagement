@@ -90,5 +90,37 @@ namespace StockManagment
 
             //comboBox1.SelectedText = dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
         }
+
+        private bool IfProductExists(SqlConnection con, string ProductCode)
+        {
+            SqlDataAdapter sda = new SqlDataAdapter("select 1 from Products where ProductCode='"+textBox1.Text+"'", con);
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
+            if (dt.Rows.Count > 0)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection("Data Source=SADIK\\SQLEXPRESS;Initial Catalog=Stock;Integrated Security=True");
+            var sqlQuery = "";
+            if(IfProductExists(con,textBox1.Text))
+            {
+                con.Open();
+                sqlQuery = "Delete from Products where ProductCode='"+ textBox1.Text + "'";
+                SqlCommand cmd = new SqlCommand(sqlQuery,con);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            else
+            {
+                MessageBox.Show("Record Doesn't Exits");
+            }
+            DataLoad();
+        }
     }
 }
